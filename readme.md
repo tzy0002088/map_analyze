@@ -9,7 +9,7 @@
 #### 2.1 命令行中输入：
 
 ```
-python3 map_analyze.py -m xxxx_demo.map -k rtos
+python3 map_analyze.py -m at820_alg_standard_demo.map -k rv_backtrace
 ```
 
 命令行参数：
@@ -22,20 +22,56 @@ python3 map_analyze.py -m xxxx_demo.map -k rtos
 #### 2.2 输出：
 
 ```
-.sdata: 8 bytes
-.sbss: 124 bytes
-.bss: 141724 bytes
-.text: 12472 bytes
-.rodata: 157 bytes
+.text: 1614 bytes
+.data: 66 bytes
+.bss: 204 bytes
+.rodata: 1219 bytes
 ------------------------------
-L2SRAM: 141856 bytes
-FLASH: 12629 bytes
+L1_ITCM: 1614 bytes
+L2SRAM: 270 bytes
+FLASH: 1219 bytes
+------------------------------
+{
+    "L1_ITCM": {
+        "symbal": [
+            ".text, size: 0x60",
+            ".text.rv_backtrace_call_stack, size: 0xe4",
+            ".text.rv_backtrace_init, size: 0x58",
+            ".text.rv_backtrace_fault, size: 0x3f8",
+            ".text.rv_backtrace_current, size: 0x84",
+            ".text.rv_backtrace_current_thread_name, size: 0x12",
+            ".text.rv_backtrace_current_thread_stack_addr, size: 0x12",
+            ".text.rv_backtrace_current_thread_stack_size, size: 0x12"
+        ],
+        "all_size": 1614
+    },
+    "L2SRAM": {
+        "symbal": [
+            ".data.fw_info, size: 0x42",
+            ".bss.callstack.1663, size: 0x40",
+            ".bss.fault_call_stack.1652, size: 0x80",
+            ".bss.thread_info.1653, size: 0xc"
+        ],
+        "all_size": 270
+    },
+    "FLASH": {
+        "symbal": [
+            ".rodata.code_section, size: 0x10",
+            ".rodata.fault_cause.1623, size: 0x40",
+            ".rodata.rv_backtrace_fault.str1.4, size: 0x2a0",
+            ".rodata.stack_info_table, size: 0x30",
+            ".rodata.str1.4, size: 0x1a3"
+        ],
+        "all_size": 1219
+    }
+}
 ```
 
 输出说明：
 
-* 上面一部分为 rtos 模块（rtos 目录下的所有 C 文件）各 section 占用
-* 下面一部分为各 section 在最终 内存/flash 中的占用，如 FLASH 的 12629 bytes 包含 .text 段与.rodata 段，其余 section 全部在 L2SRAM 中
+* 上面一部分为 rv_backtrace 模块（rv_backtrace 目录下的所有 C 文件）各 section 占用
+* 中间一部分为各 section 在最终 mem layout 中的占用
+* 下面一部分为各内存区域中到低都包含了那些符号
 
 ### 3. 平台适配
 
