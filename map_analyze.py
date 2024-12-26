@@ -2,6 +2,7 @@ import re
 import os
 import argparse
 from collections import defaultdict
+import json
 
 class MapAnalyzer:
     def __init__(self, map_file: str, keyword: str, section_whitelist=None, mem_layout=None):
@@ -35,7 +36,7 @@ class MapAnalyzer:
 
     def __analyze(self):
         section_usage = defaultdict(int)
-        mem_usage = defaultdict(int)
+        mem_usage = defaultdict(lambda: {"symbal": [], "all_size": 0})
         processed_map = self.__preprocess_map_file()
 
         pattern = re.compile(
@@ -59,7 +60,9 @@ class MapAnalyzer:
                     for region_name, address_range in self.__mem_layout.items():
                         start_addr, end_addr = address_range
                         if start_addr <= int(symble_addr[0], 16) < end_addr:
-                            mem_usage[region_name] += size
+                            format_str = f"{section_name}, size: {hex(size)}"
+                            mem_usage[region_name]["symbal"].append(format_str)
+                            mem_usage[region_name]["all_size"] += size
         os.remove(processed_map)
 
         return section_usage, mem_usage
@@ -89,8 +92,10 @@ if __name__ == "__main__":
             for section, size in section_usage.items():
                 print(f"{section}: {size} bytes")
             print('------------------------------')
-            for region, size in mem_usage.items():
-                print(f"{region}: {size} bytes")
+            for region, data in mem_usage.items():
+                print(f"{region}: {data['all_size']} bytes")
+            print('------------------------------')
+            print(json.dumps(mem_usage, indent=4))
         else:
             print(f"Error: File '{map}' does not exist.")
     except Exception as e:
