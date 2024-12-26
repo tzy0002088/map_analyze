@@ -36,7 +36,7 @@ class MapAnalyzer:
 
     def __analyze(self):
         section_usage = defaultdict(int)
-        mem_usage = defaultdict(lambda: {"symbal": [], "all_size": 0})
+        mem_usage = defaultdict(lambda: {"symbol": [], "all_size": 0})
         processed_map = self.__preprocess_map_file()
 
         pattern = re.compile(
@@ -61,7 +61,7 @@ class MapAnalyzer:
                         start_addr, end_addr = address_range
                         if start_addr <= int(symble_addr[0], 16) < end_addr:
                             format_str = f"{section_name}, size: {hex(size)}"
-                            mem_usage[region_name]["symbal"].append(format_str)
+                            mem_usage[region_name]["symbol"].append(format_str)
                             mem_usage[region_name]["all_size"] += size
         os.remove(processed_map)
 

@@ -33,7 +33,7 @@ FLASH: 1219 bytes
 ------------------------------
 {
     "L1_ITCM": {
-        "symbal": [
+        "symbol": [
             ".text, size: 0x60",
             ".text.rv_backtrace_call_stack, size: 0xe4",
             ".text.rv_backtrace_init, size: 0x58",
@@ -46,7 +46,7 @@ FLASH: 1219 bytes
         "all_size": 1614
     },
     "L2SRAM": {
-        "symbal": [
+        "symbol": [
             ".data.fw_info, size: 0x42",
             ".bss.callstack.1663, size: 0x40",
             ".bss.fault_call_stack.1652, size: 0x80",
@@ -55,7 +55,7 @@ FLASH: 1219 bytes
         "all_size": 270
     },
     "FLASH": {
-        "symbal": [
+        "symbol": [
             ".rodata.code_section, size: 0x10",
             ".rodata.fault_cause.1623, size: 0x40",
             ".rodata.rv_backtrace_fault.str1.4, size: 0x2a0",
