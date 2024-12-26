@@ -9,7 +9,7 @@
 #### 2.1 命令行中输入：
 
 ```
-python3 map_analyze.py -m at820_alg_standard_demo.map -k rtos
+python3 map_analyze.py -m xxxx_demo.map -k rtos
 ```
 
 命令行参数：
@@ -36,3 +36,25 @@ FLASH: 12629 bytes
 
 * 上面一部分为 rtos 模块（rtos 目录下的所有 C 文件）各 section 占用
 * 下面一部分为各 section 在最终 内存/flash 中的占用，如 FLASH 的 12629 bytes 包含 .text 段与.rodata 段，其余 section 全部在 L2SRAM 中
+
+### 3. 平台适配
+
+​	在构造 MapAnalyzer 时，根据具体平台 lds 文件定义 `section_whitelist` 以及 `mem_layout`，如下：
+
+```python
+section_whitelist = [".bss", ".text", ".rodata", ".data"]
+mem_layout = {
+    "dtcm": [0x10000000, 0x10030000],
+    "flash": [0, 0x8000],
+    "flash_nc": [0x00010000, 0x00018000],
+    "ram0": [0x30000000, 0x30010000],
+}
+
+# 默认内置 section_whitelist 与 mem_layout，需要根据具体平台修改 
+analyzer = MapAnalyzer(map, keyword, section_whitelist, mem_layout)
+```
+
+>section_whitelist：section 白名单，希望统计的 section 名
+>
+>mem_layout：内存布局
+
