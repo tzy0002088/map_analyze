@@ -2,14 +2,14 @@
 
 ### 1. 介绍
 
-​	map_analyze 用于分析 elf map 文件，能够方便分析出 `指定模块` 在可执行文件中各的静态内存占用。
+​	map_analyze 用于分析 elf map 文件，能够方便分析出 `指定模块` 在可执行文件中的静态内存占用。
 
 ### 2. 如何使用
 
 #### 2.1 命令行中输入：
 
 ```
-python3 map_analyze.py -m at820_alg_standard_demo.map -k rv_backtrace
+python3 map_analyze.py -m rtthread.map -k finsh
 ```
 
 命令行参数：
@@ -22,75 +22,119 @@ python3 map_analyze.py -m at820_alg_standard_demo.map -k rv_backtrace
 #### 2.2 输出：
 
 ```
-.text: 1614 bytes
-.data: 66 bytes
-.bss: 204 bytes
-.rodata: 1219 bytes
+.text: 11418 bytes
+.rodata: 4509 bytes
+.rti_fn: 4 bytes
+.bss: 145 bytes
 ------------------------------
-L1_ITCM: 1614 bytes
-L2SRAM: 270 bytes
-FLASH: 1219 bytes
+QFLASH: 15931 bytes
+RAM: 145 bytes
 ------------------------------
 {
-    "L1_ITCM": {
+    "QFLASH": {
         "symbol": [
-            ".text, size: 0x60",
-            ".text.rv_backtrace_call_stack, size: 0xe4",
-            ".text.rv_backtrace_init, size: 0x58",
-            ".text.rv_backtrace_fault, size: 0x3f8",
-            ".text.rv_backtrace_current, size: 0x84",
-            ".text.rv_backtrace_current_thread_name, size: 0x12",
-            ".text.rv_backtrace_current_thread_stack_addr, size: 0x12",
-            ".text.rv_backtrace_current_thread_stack_size, size: 0x12"
+            ".text.rt_list_isempty, size: 0x24",
+            ".text.rt_list_len, size: 0x36",
+            ".text.clear, size: 0x14",
+            ".text.version, size: 0xe",
+            ".text.object_split, size: 0x28",
+            ".text.list_find_init, size: 0x46",
+            ".text.list_get_next, size: 0xc6",
+            ".text.list_thread, size: 0x208",
+            ".text.show_wait_queue, size: 0x54",
+            ".text.list_sem, size: 0x12c",
+            ".text.list_event, size: 0x118",
+            ".text.list_mutex, size: 0xe8",
+            ".text.list_mailbox, size: 0x13c",
+            ".text.list_msgqueue, size: 0x12c",
+            ".text.list_memheap, size: 0xd8",
+            ".text.list_mempool, size: 0x144",
+            ".text.list_timer, size: 0x128",
+            ".text.list_device, size: 0xf0",
+            ".text.msh_help, size: 0x5c",
+            ".text.cmd_ps, size: 0x18",
+            ".text.cmd_free, size: 0x5c",
+            ".text.msh_split, size: 0x170",
+            ".text.msh_get_cmd, size: 0x64",
+            ".text._msh_exec_cmd, size: 0xd4",
+            ".text.msh_exec, size: 0xa0",
+            ".text.str_common, size: 0x4a",
+            ".text.msh_auto_complete_path, size: 0x228",
+            ".text.msh_auto_complete, size: 0xe4",
+            ".text.msh_readline, size: 0xa2",
+            ".text.msh_exec_script, size: 0x17c",
+            ".text.cmd_ls, size: 0x34",
+            ".text.cmd_cp, size: 0x44",
+            ".text.cmd_mv, size: 0x138",
+            ".text.cmd_cat, size: 0x58",
+            ".text.directory_delete_for_msh, size: 0x13c",
+            ".text.cmd_rm, size: 0x1c4",
+            ".text.cmd_cd, size: 0x58",
+            ".text.cmd_pwd, size: 0x24",
+            ".text.cmd_mkdir, size: 0x40",
+            ".text.cmd_mkfs, size: 0x90",
+            ".text.cmd_mount, size: 0xe0",
+            ".text.cmd_umount, size: 0x64",
+            ".text.cmd_df, size: 0x70",
+            ".text.cmd_echo, size: 0x94",
+            ".text.cmd_tail, size: 0x1bc",
+            ".text.finsh_get_prompt, size: 0x9c",
+            ".text.finsh_set_prompt_mode, size: 0x48",
+            ".text.finsh_getchar, size: 0x90",
+            ".text.finsh_rx_ind, size: 0x3c",
+            ".text.finsh_set_device, size: 0xd8",
+            ".text.shell_auto_complete, size: 0x34",
+            ".text.shell_handle_history, size: 0x34",
+            ".text.shell_push_history, size: 0x15e",
+            ".text.finsh_thread_entry, size: 0x5cc",
+            ".text.finsh_system_function_init, size: 0x2c",
+            ".text.finsh_system_init, size: 0x9c",
+            ".rodata, size: 0x6df",
+            ".rodata, size: 0xac",
+            ".rodata, size: 0x496",
+            ".rodata, size: 0x91",
+            ".rodata.name, size: 0x1ce",
+            ".rodata.device_type_str, size: 0x64",
+            ".rodata.name, size: 0x6d",
+            ".rodata.__FUNCTION__.0, size: 0xe",
+            ".rodata.name, size: 0x1fc",
+            ".rodata.__FUNCTION__.6, size: 0x16",
+            ".rodata.__FUNCTION__.5, size: 0xe",
+            ".rodata.__FUNCTION__.4, size: 0xd",
+            ".rodata.__FUNCTION__.3, size: 0x11",
+            ".rti_fn.6, size: 0x4"
         ],
-        "all_size": 1614
+        "all_size": 15931
     },
-    "L2SRAM": {
+    "RAM": {
         "symbol": [
-            ".data.fw_info, size: 0x42",
-            ".bss.callstack.1663, size: 0x40",
-            ".bss.fault_call_stack.1652, size: 0x80",
-            ".bss.thread_info.1653, size: 0xc"
+            ".bss._syscall_table_begin, size: 0x4",
+            ".bss._syscall_table_end, size: 0x4",
+            ".bss.shell, size: 0x4",
+            ".bss.finsh_prompt_custom, size: 0x4",
+            ".bss.finsh_prompt.8, size: 0x81"
         ],
-        "all_size": 270
-    },
-    "FLASH": {
-        "symbol": [
-            ".rodata.code_section, size: 0x10",
-            ".rodata.fault_cause.1623, size: 0x40",
-            ".rodata.rv_backtrace_fault.str1.4, size: 0x2a0",
-            ".rodata.stack_info_table, size: 0x30",
-            ".rodata.str1.4, size: 0x1a3"
-        ],
-        "all_size": 1219
+        "all_size": 145
     }
 }
 ```
 
 输出说明：
 
-* 上面一部分为 rv_backtrace 模块（rv_backtrace 目录下的所有 C 文件）各 section 占用
+* 上面一部分为 finsh 模块（finsh 目录下的所有 C 文件）各 section 占用
 * 中间一部分为各 section 在最终 mem layout 中的占用
-* 下面一部分为各内存区域中到低都包含了那些符号
+* 下面一部分为各内存区域中包含了 finsh 模块的哪些符号
 
 ### 3. 平台适配
 
-​	在构造 MapAnalyzer 时，根据具体平台 lds 文件定义 `section_whitelist` 以及 `mem_layout`，如下：
+​	在构造 MapAnalyzer 时，根据具体平台 lds 文件定义 `section_whitelist`，如下：
 
 ```python
-section_whitelist = [".bss", ".text", ".rodata", ".data"]
-mem_layout = {
-    "dtcm": [0x10000000, 0x10030000],
-    "flash": [0, 0x8000],
-    "flash_nc": [0x00010000, 0x00018000],
-    "ram0": [0x30000000, 0x30010000],
-}
+section_whitelist = ['.text', '.rodata', '.data', '.bss', '.rti_fn']
 
-# 默认内置 section_whitelist 与 mem_layout，需要根据具体平台修改 
-analyzer = MapAnalyzer(map, keyword, section_whitelist, mem_layout)
+# 默认内置 section_whitelist，需要根据具体平台修改 
+analyzer = MapAnalyzer(map, keyword, section_whitelist)
 ```
 
 >section_whitelist：section 白名单，希望统计的 section 名
->
->mem_layout：内存布局
 

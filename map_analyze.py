@@ -5,17 +5,10 @@ from collections import defaultdict
 import json
 
 class MapAnalyzer:
-    def __init__(self, map_file: str, keyword: str, section_whitelist=None, mem_layout=None):
+    def __init__(self, map_file: str, keyword: str, section_whitelist=None):
         self.__map_file = map_file
         self.__keyword = keyword
         self.__whitelist = section_whitelist or [".itcm_code", ".bss", ".sbss", ".data", ".sdata", ".dtcm_data", ".dtcm_data_no_load", ".text", ".flash_rodata", ".rodata"]
-        self.__mem_layout = mem_layout or {
-            "L2SRAM": [0x10000000, 0x10030000],
-            "L1_ITCM": [0, 0x8000],
-            "L1_DTCM": [0x00010000, 0x00018000],
-            "L1CC": [0x30000000, 0x30010000],
-            "FLASH": [0x10100000, 0x10300000],
-        }
 
     def __preprocess_map_file(self) -> str:
         with open(self.__map_file, "r") as infile:
@@ -29,15 +22,42 @@ class MapAnalyzer:
             outfile.writelines(lines[start_index:])
         return temp_file
 
-    def __get_whitelisted_name(self, section_name):
+    def __get_whitelisted_name(self, section_name) -> str:
         exact_matches = {whitelisted: whitelisted for whitelisted in self.__whitelist}
         partial_matches = [whitelisted for whitelisted in self.__whitelist if whitelisted in section_name]
         return exact_matches.get(section_name) or (partial_matches[0] if partial_matches else None)
+
+    def _parse_memory_layout(self, map_file):
+        with open(map_file, "r") as f:
+            lines = f.readlines()
+
+        start_index = next((i for i, line in enumerate(lines) if "Memory Configuration" in line), None)
+        if start_index is None:
+            raise ValueError("'Memory Configuration' section not found in the map file.")
+
+        end_index = next((i for i, line in enumerate(lines) if "Linker script and memory map" in line), None)
+        if end_index is None:
+            raise ValueError("'Linker script and memory map' section not found in the map file.")
+
+        config_text = "".join(lines[start_index+3:end_index-2])
+        pattern = re.compile(r"^\s*(\S+)\s+0x([0-9a-fA-F]+)\s+0x([0-9a-fA-F]+)", re.MULTILINE)
+
+        mem_layout = {}
+        matches = pattern.findall(config_text)
+
+        for match in matches:
+            name = match[0]
+            origin = int(match[1], 16)
+            length = int(match[2], 16)
+            mem_layout[name] = [origin, origin + length]
+
+        return mem_layout
 
     def __analyze(self):
         section_usage = defaultdict(int)
         mem_usage = defaultdict(lambda: {"symbol": [], "all_size": 0})
         processed_map = self.__preprocess_map_file()
+        mem_layout = self._parse_memory_layout(processed_map)
 
         pattern = re.compile(
             r"^\s*(\.\S+|COMMON)"
@@ -57,7 +77,7 @@ class MapAnalyzer:
                 symble_addr = re.findall(address_pattern, match.group(0))
                 if (whitelisted_name := self.__get_whitelisted_name(section_name)):
                     section_usage[whitelisted_name] += size
-                    for region_name, address_range in self.__mem_layout.items():
+                    for region_name, address_range in mem_layout.items():
                         start_addr, end_addr = address_range
                         if start_addr <= int(symble_addr[0], 16) < end_addr:
                             format_str = f"{section_name}, size: {hex(size)}"
@@ -83,10 +103,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     map = args.map
     keyword = args.keyword
-
+    section_whitelist = ['.text', '.rodata', '.data', '.bss', '.rti_fn']
     try:
         if os.path.isfile(map):
-            analyzer = MapAnalyzer(map, keyword)
+            analyzer = MapAnalyzer(map, keyword, section_whitelist)
             section_usage = analyzer.section_usage()
             mem_usage = analyzer.mem_usage()
             for section, size in section_usage.items():
