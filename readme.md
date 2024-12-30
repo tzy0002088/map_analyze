@@ -2,7 +2,7 @@
 
 ### 1. 介绍
 
-​	map_analyze 用于分析 elf map 文件，能够方便分析出 `指定模块` 在可执行文件中的静态内存占用。
+​	map_analyze 用于分析 gcc 工具链生成的 map 文件，能够方便分析出 `指定模块` 在可执行文件中的静态内存占用。
 
 ### 2. 如何使用
 
@@ -132,9 +132,12 @@ RAM: 145 bytes
 ```python
 section_whitelist = ['.text', '.rodata', '.data', '.bss', '.rti_fn']
 
-# 默认内置 section_whitelist，需要根据具体平台修改 
+# 默认内置 section_whitelist，通过构造函数可指定当前平台白名单
 analyzer = MapAnalyzer(map, keyword, section_whitelist)
 ```
 
->section_whitelist：section 白名单，希望统计的 section 名
-
+> map:  map 文件路径
+>
+> keyworld:  待统计模块，如 finsh
+>
+> section_whitelist：section 白名单，希望统计的 section 名，白名单之外的 section 不会被统计
