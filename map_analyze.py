@@ -75,7 +75,7 @@ class MapAnalyzer:
                 size = match.group(2) or match.group(3)
                 size = int(size, 16)
                 symble_addr = re.findall(address_pattern, match.group(0))
-                if (whitelisted_name := self.__get_whitelisted_name(section_name)):
+                if (whitelisted_name := self.__get_whitelisted_name(section_name)) and size != 0:
                     section_usage[whitelisted_name] += size
                     for region_name, address_range in mem_layout.items():
                         start_addr, end_addr = address_range
