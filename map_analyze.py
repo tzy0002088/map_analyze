@@ -95,6 +95,18 @@ class MapAnalyzer:
         _, mem_usage = self.__analyze()
         return mem_usage
 
+    def analyze(self):
+        section_usage = self.section_usage()
+        mem_usage = self.mem_usage()
+        for section, size in section_usage.items():
+            print(f"{section}: {size} bytes")
+        print('------------------------------')
+        for region, data in mem_usage.items():
+            print(f"{region}: {data['all_size']} bytes")
+        print('------------------------------')
+        print(json.dumps(mem_usage, indent=4))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Map analyze tool')
     parser.add_argument('-m', '--map', type=str, help='Map file path', required=True)
@@ -107,15 +119,7 @@ if __name__ == "__main__":
     try:
         if os.path.isfile(map):
             analyzer = MapAnalyzer(map, keyword, section_whitelist)
-            section_usage = analyzer.section_usage()
-            mem_usage = analyzer.mem_usage()
-            for section, size in section_usage.items():
-                print(f"{section}: {size} bytes")
-            print('------------------------------')
-            for region, data in mem_usage.items():
-                print(f"{region}: {data['all_size']} bytes")
-            print('------------------------------')
-            print(json.dumps(mem_usage, indent=4))
+            analyzer.analyze()
         else:
             print(f"Error: File '{map}' does not exist.")
     except Exception as e:
